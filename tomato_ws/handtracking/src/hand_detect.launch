@@ -1,0 +1,4 @@
+<launch>
+
+    <node pkg="handtracking" name="hand_pub" type="hand_pub.py" output="screen"/>
+</launch>

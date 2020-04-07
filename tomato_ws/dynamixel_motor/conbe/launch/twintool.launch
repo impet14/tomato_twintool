@@ -1,0 +1,42 @@
+<launch>
+<group ns="twintool">
+    <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+        <rosparam>
+            namespace: dxl_manager
+            serial_ports:
+                conbe_L_port:
+                    port_name: "/dev/ttyUSB0"
+                    baud_rate: 57140
+                    min_motor_id: 1
+                    max_motor_id: 1
+                    update_rate: 100
+        </rosparam>
+    </node>
+    <param name="robot_description"
+    	command="$(find xacro)/xacro --inorder '$(find motoman_description)/urdf/twintool.urdf.xacro'" />
+
+    <!-- [3] state publisher of L-->
+	<node name="State_Publisher" pkg="conbe" type="state_publisher_twintool.py" output="screen"/> 
+	
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+		respawn="false" output="screen">
+	</node>
+
+    <rosparam file="$(find conbe)/config/jointsTwintool.yaml" command="load"/>
+	<node name="controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+		args="--manager=dxl_manager
+				--port=conbe_L_port
+				joint1_controller                                            
+				"
+		output="screen"/>
+
+	<rosparam file="$(find conbe)/config/joints_trajectory_controllerTwintool.yaml" command="load"/>
+	<node name="controller_spawner_meta" pkg="dynamixel_controllers" type="controller_spawner.py"
+		args="--manager=dxl_manager
+				--type=meta
+				twintool_controller
+				joint1_controller
+			"
+		output="screen"/>
+</group>
+</launch>

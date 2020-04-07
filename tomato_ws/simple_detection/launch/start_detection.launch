@@ -1,0 +1,17 @@
+<launch>
+
+  <rosparam command="load" file="$(find simple_detection)/config/realsense_config.yaml"/>
+  <node name="target_pub" pkg="simple_detection" type="target_pub.py" respawn="true" cwd="node" output="screen">
+  </node> 
+  
+  <!-- transform target in LArm coordination -->
+  <node name="camera_tf_listener_L" pkg="simple_detection" type="camera_tf_listener.py" respawn="true" output="screen">
+    <param name="LorR" value="L"/>
+  </node>
+
+  <!-- transform target in RArm coordination -->
+  <node name="camera_tf_listener_R" pkg="simple_detection" type="camera_tf_listener.py" respawn="true" output="screen">
+    <param name="LorR" value="R"/>
+  </node>
+
+</launch>
